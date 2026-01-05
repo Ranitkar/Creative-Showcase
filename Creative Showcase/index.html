@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="style.css">
+    <title>DigiArt | Showcase</title>
+</head>
+<body>
+    <nav>
+        <div class="logo"><strong>Digi</strong>ART</div>
+        <div id="nav-links">
+            <a href="login.html">Login</a>
+            <a href="signup.html" style="background:var(--primary); color:white; padding:8px 20px; border-radius:20px;">Join</a>
+        </div>
+    </nav>
+
+    <header style="text-align:center; padding-top:120px;">
+        <h1 style="font-size:3rem;">Digital Memories, <span style="color:var(--primary)">Beautifully</span> Stored.</h1>
+    </header>
+
+    <div class="masonry-container" id="random-grid">
+        </div>
+
+    <script src="main.js"></script>
+    <script>
+        // Populate random images for the demo
+        const grid = document.getElementById('random-grid');
+        const demoImages = [
+            'https://picsum.photos/400/600', 'https://picsum.photos/400/400',
+            'https://picsum.photos/400/700', 'https://picsum.photos/400/500',
+            'https://picsum.photos/400/800', 'https://picsum.photos/400/300'
+        ];
+        demoImages.forEach(src => {
+            grid.innerHTML += `<div class="art-card"><img src="${src}"></div>`;
+        });
+    </script>
+</body>
+</html>

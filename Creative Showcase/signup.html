@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="style.css">
+    <title>Join AuraArt</title>
+</head>
+<body style="display:flex; justify-content:center; align-items:center; min-height:100vh; background: #f1f5f9;">
+    <div class="glass-card" style="width: 400px;">
+        <h2 style="margin-top:0; font-size: 1.8rem;">Create Artist Account</h2>
+        <p style="color:#64748b; margin-bottom: 2rem;">Start showcasing your digital memories.</p>
+        
+        <form id="signupForm">
+            <input type="text" id="regUser" placeholder="Username" required>
+            <input type="email" id="regEmail" placeholder="Email Address" required>
+            <input type="password" id="regPass" placeholder="Create Password" required>
+            <button type="submit" class="btn-primary" style="width:100%">Create Account</button>
+        </form>
+        <p style="text-align:center; margin-top:1.5rem; font-size:0.9rem;">
+            Already an artist? <a href="login.html" style="color: #6366f1; font-weight:600;">Login</a>
+        </p>
+    </div>
+
+    <script>
+        document.getElementById('signupForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = document.getElementById('regUser').value;
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            
+            if (users.some(u => u.username === username)) {
+                alert("Username already taken!");
+                return;
+            }
+
+            users.push({
+                username,
+                email: document.getElementById('regEmail').value,
+                password: document.getElementById('regPass').value,
+                images: []
+            });
+
+            localStorage.setItem('users', JSON.stringify(users));
+            alert("Account created! Redirecting to login...");
+            window.location.href = 'login.html';
+        });
+    </script>
+</body>
+</html>

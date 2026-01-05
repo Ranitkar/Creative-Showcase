@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="auth-container" style="display:flex; justify-content:center; align-items:center; height:100vh;">
+    <div style="background:white; padding:40px; border-radius:30px; box-shadow:0 20px 40px rgba(0,0,0,0.1); width:350px;">
+        <h2>Welcome Back</h2>
+        <form id="loginForm" style="display:flex; flex-direction:column; gap:15px;">
+            <input type="text" id="user" placeholder="Username" required style="padding:12px; border-radius:10px; border:1px solid #ddd;">
+            <input type="password" id="pass" placeholder="Password" required style="padding:12px; border-radius:10px; border:1px solid #ddd;">
+            <button type="submit" style="background:var(--primary); color:rgb(67, 43, 200); border:none; padding:15px; border-radius:10px; font-weight:bold; cursor:pointer;">Login</button>
+        </form>
+        <p style="text-align:center; margin-top:15px; font-size:14px;">
+            New artist? <a href="signup.html">Create account</a>
+        </p>
+    </div>
+</div>
+<script>
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        // 1. Prevent the page from refreshing
+        e.preventDefault();
+
+        // 2. Get the values the user typed
+        const usernameInput = document.getElementById('user').value;
+        const passwordInput = document.getElementById('pass').value;
+
+        // 3. Get the list of registered users from LocalStorage
+        const users = JSON.parse(localStorage.getItem('users') || '[]');
+
+        // 4. Find if any user matches BOTH username and password
+        const validUser = users.find(u => u.username === usernameInput && u.password === passwordInput);
+
+        if (validUser) {
+            // 5. SUCCESS: Store the logged-in user's data so other pages know who is logged in
+            localStorage.setItem('currentUser', JSON.stringify(validUser));
+            
+            // 6. Redirect to the Dashboard
+            alert("Login successful! Welcome, " + validUser.username);
+            window.location.href = 'dashboard.html';
+        } else {
+            // 7. FAILURE
+            alert("Invalid username or password. Please try again.");
+        }
+    });
+</script>
+</body>
+</html>
+

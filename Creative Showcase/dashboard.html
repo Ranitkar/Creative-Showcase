@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="style.css">
+    <title>My Dashboard | DigiArt</title>
+</head>
+<body>
+    <nav>
+        <div class="logo"><strong>Digi</strong>ART</div>
+        <div>
+            <span id="welcomeMsg" style="margin-right:20px; font-weight:500;"></span>
+            <button onclick="logout()" class="btn-primary" style="background:#ef4444; padding:8px 16px;">Logout</button>
+        </div>
+    </nav>
+
+    <main style="padding: 120px 5% 50px;">
+        <div class="glass-card" style="margin-bottom: 40px;">
+            <h3>Upload New Memory</h3>
+            <div style="display:flex; gap:10px;">
+                <input type="url" id="imgUrl" placeholder="Paste image URL here (e.g., Unsplash link)..." style="margin-bottom:0">
+                <button onclick="uploadImg()" class="btn-primary">Upload</button>
+            </div>
+            <p id="shareLink" style="margin-top:15px; font-size:0.85rem; color:#6366f1; cursor:pointer; font-weight:500;"></p>
+        </div>
+
+        <h3>Your Private Collection</h3>
+        <hr style="border:0; border-top:1px solid #e2e8f0; margin-bottom:30px;">
+        
+        <div class="masonry-container" id="userGallery">
+            </div>
+    </main>
+
+    <script>
+    // 1. Initial Load: Show images when the page opens
+    document.addEventListener('DOMContentLoaded', () => {
+        loadGallery();
+        
+        const user = JSON.parse(localStorage.getItem('currentUser'));
+        if(user) {
+            document.getElementById('welcomeMsg').innerText = `Artist: ${user.username}`;
+        } else {
+            window.location.href = 'login.html'; // Redirect if not logged in
+        }
+    });
+
+    // 2. The Upload Function
+    function uploadImg() {
+        // MATCHING ID: Make sure this is 'imgUrl' to match your HTML
+        const urlInput = document.getElementById('imgUrl');
+        const url = urlInput.value;
+        
+        let currentUser = JSON.parse(localStorage.getItem('currentUser'));
+
+        if(url && currentUser) {
+            // Add to current session
+            currentUser.images.push(url);
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+            // Sync with global users list
+            let users = JSON.parse(localStorage.getItem('users') || '[]');
+            let idx = users.findIndex(u => u.username === currentUser.username);
+            if(idx !== -1) {
+                users[idx].images = currentUser.images;
+                localStorage.setItem('users', JSON.stringify(users));
+            }
+
+            urlInput.value = ''; // Clear the input
+            loadGallery(); // Refresh the list on screen
+            alert("Memory added to your collection!");
+        }
+    }
+
+    // 3. The Display Function
+    function loadGallery() {
+        // MATCHING ID: Make sure your HTML has <div id="userGallery"></div>
+        const gallery = document.getElementById('userGallery');
+        const user = JSON.parse(localStorage.getItem('currentUser'));
+
+        if (user && user.images) {
+            gallery.innerHTML = ''; // Clear old images
+            user.images.forEach(img => {
+                gallery.innerHTML += `
+                    <div class="art-card">
+                        <img src="${img}" style="width:100%; border-radius:15px; margin-bottom:15px;">
+                    </div>`;
+            });
+        }
+    }
+
+    // 1. Updated Display Function (Includes Delete Button)
+function loadGallery() {
+    const gallery = document.getElementById('userGallery');
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+
+    if (user && user.images) {
+        gallery.innerHTML = ''; 
+        
+        user.images.forEach((img, index) => {
+            gallery.innerHTML += `
+                <div class="art-card">
+                    <button class="delete-btn" onclick="deleteImg(${index})">×</button>
+                    <img src="${img}" style="width:100%; border-radius:15px;">
+                </div>`;
+        });
+    }
+}
+
+// 2. The New Delete Function
+function deleteImg(index) {
+    if (!confirm("Are you sure you want to delete this memory?")) return;
+
+    let currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    let users = JSON.parse(localStorage.getItem('users') || '[]');
+
+    // Remove the image from the currentUser's array using splice
+    currentUser.images.splice(index, 1);
+
+    // Update the global users list to match
+    let userIdx = users.findIndex(u => u.username === currentUser.username);
+    if (userIdx !== -1) {
+        users[userIdx].images = currentUser.images;
+    }
+
+    // Save everything back to LocalStorage
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+    localStorage.setItem('users', JSON.stringify(users));
+
+    // Refresh the gallery on the screen immediately
+    loadGallery();
+}
+</script>
+</body>
+</html>
